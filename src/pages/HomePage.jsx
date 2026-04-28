@@ -15,12 +15,19 @@ export default function HomePage() {
       collection(db, "questions"),
       orderBy("createdAt", "desc")
     );
+
     const unsub = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setQuestions(list);
+
+      // 🔥 SORT BY LIKES (MOST LIKED FIRST)
+      const sorted = list.sort((a, b) => {
+        return (b.likes || 0) - (a.likes || 0);
+      });
+
+      setQuestions(sorted);
     });
 
     return () => unsub();

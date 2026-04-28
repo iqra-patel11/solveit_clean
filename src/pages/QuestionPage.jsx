@@ -4,44 +4,44 @@ import { useParams } from "react-router-dom";
 import { db } from "../firebase";
 import {
   doc,
-  getDoc,
   collection,
   query,
   where,
   orderBy,
   onSnapshot,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import AnswerForm from "../components/AnswerForm.jsx";
 import AnswerList from "../components/AnswerList.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
-
 
 export default function QuestionPage() {
   const { id } = useParams();
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [loadingQuestion, setLoadingQuestion] = useState(true);
+  const [commentText, setCommentText] = useState("");
+
   const { user } = useAuth();
 
+  // 🔥 REAL-TIME QUESTION FETCH (FIXED)
   useEffect(() => {
-    const loadQuestion = async () => {
-      try {
-        const snap = await getDoc(doc(db, "questions", id));
-        if (snap.exists()) {
-          setQuestion({ id: snap.id, ...snap.data() });
-        } else {
-          setQuestion(null);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingQuestion(false);
-      }
-    };
+    const ref = doc(db, "questions", id);
 
-    loadQuestion();
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        setQuestion({ id: snap.id, ...snap.data() });
+      } else {
+        setQuestion(null);
+      }
+      setLoadingQuestion(false);
+    });
+
+    return () => unsub();
   }, [id]);
 
+  // ANSWERS (unchanged)
   useEffect(() => {
     const q = query(
       collection(db, "answers"),
@@ -60,6 +60,52 @@ export default function QuestionPage() {
     return () => unsub();
   }, [id]);
 
+  // 🔥 ADD COMMENT
+  const handleAddComment = async () => {
+    if (!commentText.trim()) return;
+
+    try {
+      const ref = doc(db, "questions", id);
+
+      await updateDoc(ref, {
+        comments: arrayUnion({
+          text: commentText,
+          user: user?.email || "anonymous",
+          likes: 0,
+          dislikes: 0,
+          createdAt: new Date(),
+        }),
+      });
+
+      setCommentText("");
+    } catch (err) {
+      console.error("Comment error:", err);
+    }
+  };
+
+  // 🔥 LIKE / DISLIKE COMMENT
+  const handleCommentAction = async (index, type) => {
+    try {
+      const ref = doc(db, "questions", id);
+
+      const updatedComments = [...(question.comments || [])];
+
+      if (type === "like") {
+        updatedComments[index].likes =
+          (updatedComments[index].likes || 0) + 1;
+      } else {
+        updatedComments[index].dislikes =
+          (updatedComments[index].dislikes || 0) + 1;
+      }
+
+      await updateDoc(ref, {
+        comments: updatedComments,
+      });
+    } catch (err) {
+      console.error("Comment update error:", err);
+    }
+  };
+
   if (loadingQuestion) return <p>Loading…</p>;
   if (!question) return <p>Question not found.</p>;
 
@@ -67,11 +113,17 @@ export default function QuestionPage() {
     ? question.createdAt.toDate()
     : null;
 
+  // 🔥 SORT COMMENTS (MOST LIKED FIRST)
+  const sortedComments = [...(question.comments || [])].sort(
+    (a, b) => (b.likes || 0) - (a.likes || 0)
+  );
+
   return (
     <div>
       <div className="card">
         <h1>{question.title}</h1>
         {question.body && <p>{question.body}</p>}
+
         <div className="question-meta">
           <span>{question.authorName || "Anonymous"}</span>
           {created && <span>{created.toLocaleString()}</span>}
@@ -85,6 +137,44 @@ export default function QuestionPage() {
             </span>
           )}
         </div>
+      </div>
+
+      {/* 🔥 COMMENTS */}
+      <div className="card" style={{ marginTop: "15px" }}>
+        <h2>Comments</h2>
+
+        {user && (
+          <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
+            <input
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Write a comment..."
+              style={{ flex: 1, padding: "8px" }}
+            />
+            <button onClick={handleAddComment}>Post</button>
+          </div>
+        )}
+
+        {sortedComments.length > 0 ? (
+          sortedComments.map((c, index) => (
+            <div key={index} className="question-card" style={{ marginBottom: "8px" }}>
+              <p>{c.text}</p>
+              <small>{c.user}</small>
+
+              <div className="question-actions">
+                <button onClick={() => handleCommentAction(index, "like")}>
+                  👍 {c.likes || 0}
+                </button>
+
+                <button onClick={() => handleCommentAction(index, "dislike")}>
+                  👎 {c.dislikes || 0}
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No comments yet.</p>
+        )}
       </div>
 
       <h2>Answers</h2>

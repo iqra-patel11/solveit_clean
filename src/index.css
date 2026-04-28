@@ -1,239 +1,220 @@
-/* src/index.css */
-
+/* RESET */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background: #0f172a;
-  color: #e5e7eb;
+  padding: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* 🎨 THEME */
+:root {
+  --bg: #fffdf7;
+  --bg-soft: #fff7e6;
+  --accent: #ffb703;
+  --accent-strong: #fb8500;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --radius-lg: 14px;
 }
 
-.container {
-  max-width: 960px;
-  margin: 80px auto 40px;
-  padding: 0 16px;
+/* BODY */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #fffdf7, #fff7e6);
+  color: var(--text);
 }
 
-/* Navbar */
+/* 🔥 CENTER LAYOUT */
+.app-main {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
 
+.app-main > * {
+  width: 100%;
+  max-width: 720px;
+}
+
+/* NAVBAR */
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background: #020617;
-  border-bottom: 1px solid #1f2937;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border);
+  margin: 10px auto;
+  max-width: 900px;
+}
+
+.logo-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  z-index: 10;
-}
-
-.logo {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: #38bdf8;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
 }
 
 .nav-links {
   display: flex;
-  gap: 16px;
-  align-items: center;
+  gap: 8px;
 }
 
-.nav-links a {
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-.nav-links a:hover {
-  opacity: 1;
-}
-
-.nav-username {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-/* Buttons */
-
-.btn-primary {
-  border: none;
-  padding: 8px 16px;
+.nav-link {
+  padding: 6px 12px;
   border-radius: 999px;
-  background: #38bdf8;
-  color: #020617;
-  font-weight: 600;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background: var(--bg-soft);
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+/* QUESTION CARD */
+.question-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 14px;
+  transition: all 0.2s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 183, 3, 0.2);
+}
+
+/* META */
+.question-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* TAGS */
+.tag {
+  font-size: 10px;
+  background: #fff4cc;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-right: 4px;
+}
+
+/* ACTION BUTTONS */
+.question-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.question-actions button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+/* 👍 */
+.question-actions button:nth-child(1):hover {
+  background: #fff4cc;
+  border-color: var(--accent);
+}
+
+/* 👎 */
+.question-actions button:nth-child(2):hover {
+  background: #ffe4e6;
+  border-color: #ef4444;
+}
+
+/* 🗑️ */
+.question-actions button:nth-child(3):hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* INPUTS */
+input,
+textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin-top: 6px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.2);
+}
+
+/* BUTTON */
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  padding: 10px 16px;
+  border: none;
+  margin-top: 10px;
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  background: #0ea5e9;
+  background: var(--accent-strong);
 }
 
-.btn-small {
-  border: none;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #1f2937;
-  color: #e5e7eb;
-  cursor: pointer;
-  font-size: 0.8rem;
+/* FOOTER */
+.app-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 20px;
 }
 
-.btn-small:hover {
-  background: #374151;
-}
-
-.link-button {
-  background: none;
-  border: none;
-  color: #38bdf8;
-  padding: 0;
-  margin-top: 12px;
-  cursor: pointer;
-}
-
-/* Cards & layout */
-
-.card {
-  background: #020617;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #1f2937;
-  margin-bottom: 16px;
-}
+/* 🔥 FIX PAGE HEADER (TITLE + ASK BUTTON SAME ROW) */
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* Forms */
-
-.field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
+/* Prevent button from dropping below unnecessarily */
+.page-header .btn-primary {
+  white-space: nowrap;
 }
 
-.field label {
-  font-size: 0.85rem;
-  margin-bottom: 4px;
-  opacity: 0.8;
-}
-
-input,
-textarea {
-  border-radius: 8px;
-  border: 1px solid #1f2937;
-  padding: 8px 10px;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 0.9rem;
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: #38bdf8;
-}
-
-.error-text {
-  font-size: 0.85rem;
-  color: #f97373;
-}
-
-/* Questions */
-
+/* 🔥 QUESTION LIST BELOW HEADER */
 .question-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.question-card {
-  display: block;
-  background: #020617;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #1f2937;
-  transition: border-color 0.15s ease, transform 0.1s ease;
-}
-
-.question-card:hover {
-  border-color: #38bdf8;
-  transform: translateY(-1px);
-}
-
-.question-body {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.question-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.tags {
-  display: flex;
-  gap: 4px;
-}
-
-.tag {
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid #1f2937;
-}
-
-/* Answers */
-
-.answers {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.answer-card p {
-  margin: 0 0 8px;
-}
-
-/* Auth */
-
-.auth-page {
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-.auth-page h1 {
-  margin-bottom: 16px;
-}
-
-/* Misc */
-
-.center {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 14px;
+  width: 100%;
 }
